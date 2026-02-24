@@ -15,4 +15,5 @@ export const env = {
   DATABASE_URL: process.env.DATABASE_URL as string,
   REDIS_URL: process.env.REDIS_URL || "redis://localhost:6379",
   JWT_SECRET: process.env.JWT_SECRET as string,
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || "24h",
 };

@@ -1,4 +1,10 @@
 ﻿import { NextFunction, Request, Response } from "express";
+import { AppError } from "../utils/app-error.util";
+import { responseUtil } from "../utils/response.util";
+
+export const notFoundHandler = (_req: Request, res: Response) => {
+  res.status(404).json(responseUtil.error("Route not found", 404));
+};
 
 export const errorHandler = (
   err: unknown,
@@ -6,6 +12,10 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  const message = err instanceof Error ? err.message : "Internal server error";
-  res.status(500).json({ success: false, message });
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json(responseUtil.error(err.message, err.statusCode, err.errors));
+  }
+
+  const fallbackMessage = "Internal server error";
+  return res.status(500).json(responseUtil.error(fallbackMessage, 500));
 };
