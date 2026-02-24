@@ -18,16 +18,6 @@ Implemented:
 - Password hashing with `bcryptjs`.
 - Standard base response format.
 
-Files:
-- `src/modules/auth/auth.validation.ts`
-- `src/modules/auth/auth.service.ts`
-- `src/modules/auth/auth.controller.ts`
-- `src/modules/auth/auth.routes.ts`
-- `src/middleware/validate.middleware.ts`
-- `src/middleware/error.middleware.ts`
-- `src/utils/app-error.util.ts`
-- `src/utils/response.util.ts`
-
 ### Feature 2: Identity Management (Login)
 Status: Completed
 
@@ -37,12 +27,17 @@ Implemented:
 - Configurable expiration (`JWT_EXPIRES_IN`, default 24h).
 - Standard success/error responses.
 
-Files:
-- `src/utils/jwt.util.ts`
-- `src/modules/auth/auth.service.ts`
-- `src/modules/auth/auth.controller.ts`
-- `src/config/env.ts`
-- `.env.example`
+### Feature 3: Content Lifecycle and Soft Deletion (Author-only)
+Status: Completed
+
+Implemented:
+- POST `/api/v1/articles` for authors only.
+- GET `/api/v1/articles/me` for authors only, paginated, includes both Draft and Published.
+- PUT `/api/v1/articles/:id` for authors only with ownership checks.
+- DELETE `/api/v1/articles/:id` uses soft deletion by setting `deletedAt`.
+- Forbidden behavior when modifying another author's article returns `Success: false` and message `Forbidden`.
+- Title/content/category/status validations centralized through zod.
+- Optional `includeDeleted=true` query on `/articles/me`.
 
 ## Data Model Foundation
 Status: Completed for baseline
@@ -54,13 +49,6 @@ Implemented Prisma models and constraints for:
 - DailyAnalytics
 - Enums: `Role`, `ArticleStatus`
 
-File:
-- `prisma/schema.prisma`
-
 ## Next Feature (Planned)
-Feature 3: Content Lifecycle and Soft Deletion (Author-only)
-- POST `/articles`
-- GET `/articles/me`
-- PUT `/articles/{id}`
-- DELETE `/articles/{id}` (soft delete)
-- Ownership checks and forbidden handling.
+Feature 4: Public News Feed
+- GET `/articles` with filters (`category`, `author`, `q`), published-only, non-deleted, paginated.
