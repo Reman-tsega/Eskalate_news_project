@@ -1,10 +1,12 @@
-﻿export const getPagination = (page = 1, limit = 10) => {
-  const safePage = Math.max(1, page);
-  const safeLimit = Math.max(1, limit);
+export const getPagination = (page = 1, pageSize = 10) => {
+  const safePage = Number.isFinite(page) ? Math.max(1, page) : 1;
+  const safePageSize = Number.isFinite(pageSize) ? Math.min(100, Math.max(1, pageSize)) : 10;
+
   return {
     page: safePage,
-    limit: safeLimit,
-    skip: (safePage - 1) * safeLimit,
-    take: safeLimit,
+    pageSize: safePageSize,
+    skip: (safePage - 1) * safePageSize,
+    take: safePageSize,
   };
 };
+

@@ -15,6 +15,8 @@ export const validate = (schema: ZodObject<ZodRawShape>) => {
     }
 
     req.body = parsed.data.body ?? req.body;
+    req.params = parsed.data.params ?? req.params;
+    req.query = parsed.data.query ?? req.query;
     next();
   };
 };

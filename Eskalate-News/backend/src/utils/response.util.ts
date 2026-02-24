@@ -23,7 +23,7 @@ export const responseUtil = {
     Errors: null,
   }),
 
-  error: (message: string, _statusCode = 400, errors: string[] | null = null): BaseApiResponse<null> => ({
+  error: (message: string, errors: string[] | null = null): BaseApiResponse<null> => ({
     Success: false,
     Message: message,
     Object: null,

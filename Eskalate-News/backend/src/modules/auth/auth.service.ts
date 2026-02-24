@@ -1,4 +1,4 @@
-﻿import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
+import { env } from "../../config/env";
 import { prisma } from "../../database/prisma";
 import { AppError } from "../../utils/app-error.util";
 import { signAccessToken } from "../../utils/jwt.util";
@@ -6,6 +6,14 @@ import { hashPassword, verifyPassword } from "../../utils/password.util";
 
 type RegisterInput = { name: string; email: string; password: string; role: "author" | "reader" };
 type LoginInput = { email: string; password: string };
+
+const isUniqueConstraintError = (error: unknown): boolean => {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  return "code" in error && (error as { code?: string }).code === "P2002";
+};
 
 export const authService = {
   register: async (input: RegisterInput) => {
@@ -30,7 +38,7 @@ export const authService = {
 
       return createdUser;
     } catch (error: unknown) {
-      if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
+      if (isUniqueConstraintError(error)) {
         throw new AppError("Conflict", 409, ["Email already exists"]);
       }
 
@@ -58,7 +66,7 @@ export const authService = {
     return {
       accessToken,
       tokenType: "Bearer",
-      expiresIn: "24h",
+      expiresIn: env.JWT_EXPIRES_IN,
       user: {
         id: user.id,
         name: user.name,
@@ -68,3 +76,4 @@ export const authService = {
     };
   },
 };
+

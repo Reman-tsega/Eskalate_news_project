@@ -1,14 +1,10 @@
-﻿import { z } from "zod";
+import { z } from "zod";
 
 const articleStatusSchema = z.enum(["Draft", "Published"]);
 
 const paginationQuerySchema = z.object({
   page: z.coerce.number().int().min(1).optional(),
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
-  includeDeleted: z
-    .union([z.literal("true"), z.literal("false")])
-    .optional()
-    .transform((value) => value === "true"),
 });
 
 export const createArticleSchema = z.object({
@@ -43,5 +39,25 @@ export const deleteArticleSchema = z.object({
 });
 
 export const listMyArticlesSchema = z.object({
-  query: paginationQuerySchema,
+  query: paginationQuerySchema.extend({
+    includeDeleted: z
+      .union([z.literal("true"), z.literal("false")])
+      .optional()
+      .transform((value) => value === "true"),
+  }),
 });
+
+export const listPublicArticlesSchema = z.object({
+  query: paginationQuerySchema.extend({
+    category: z.string().trim().min(1).optional(),
+    author: z.string().trim().min(1).optional(),
+    q: z.string().trim().min(1).optional(),
+  }),
+});
+
+export const getArticleByIdSchema = z.object({
+  params: z.object({
+    id: z.string().uuid(),
+  }),
+});
+

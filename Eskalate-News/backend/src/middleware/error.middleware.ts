@@ -3,7 +3,7 @@ import { AppError } from "../utils/app-error.util";
 import { responseUtil } from "../utils/response.util";
 
 export const notFoundHandler = (_req: Request, res: Response) => {
-  res.status(404).json(responseUtil.error("Route not found", 404));
+  res.status(404).json(responseUtil.error("Route not found"));
 };
 
 export const errorHandler = (
@@ -13,9 +13,9 @@ export const errorHandler = (
   _next: NextFunction,
 ) => {
   if (err instanceof AppError) {
-    return res.status(err.statusCode).json(responseUtil.error(err.message, err.statusCode, err.errors));
+    return res.status(err.statusCode).json(responseUtil.error(err.message, err.errors));
   }
 
   const fallbackMessage = "Internal server error";
-  return res.status(500).json(responseUtil.error(fallbackMessage, 500));
+  return res.status(500).json(responseUtil.error(fallbackMessage));
 };

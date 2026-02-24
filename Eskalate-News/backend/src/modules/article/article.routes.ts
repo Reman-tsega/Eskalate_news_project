@@ -1,5 +1,5 @@
-﻿import { Router } from "express";
-import { requireAuth } from "../../middleware/auth.middleware";
+import { Router } from "express";
+import { optionalAuth, requireAuth } from "../../middleware/auth.middleware";
 import { allowRoles } from "../../middleware/rbac.middleware";
 import { validate } from "../../middleware/validate.middleware";
 import { asyncHandler } from "../../utils/async-handler.util";
@@ -7,11 +7,15 @@ import { articleController } from "./article.controller";
 import {
   createArticleSchema,
   deleteArticleSchema,
+  getArticleByIdSchema,
   listMyArticlesSchema,
+  listPublicArticlesSchema,
   updateArticleSchema,
 } from "./article.validation";
 
 export const articleRoutes = Router();
+
+articleRoutes.get("/", validate(listPublicArticlesSchema), asyncHandler(articleController.listPublic));
 
 articleRoutes.post(
   "/",
@@ -27,6 +31,13 @@ articleRoutes.get(
   allowRoles("author"),
   validate(listMyArticlesSchema),
   asyncHandler(articleController.listMine),
+);
+
+articleRoutes.get(
+  "/:id",
+  optionalAuth,
+  validate(getArticleByIdSchema),
+  asyncHandler(articleController.getById),
 );
 
 articleRoutes.put(
